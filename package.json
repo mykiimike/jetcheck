@@ -9,7 +9,7 @@
  "bin": {
   "jetcheck": "bin/index.js"
  },
- "repository": "https://github.com/Fieldify/antd",
+ "repository": "https://github.com/mykiimike/jetcheck",
  "author": "Michael VERGOZ",
  "license": "GPL-3.0",
  "dependencies": {
