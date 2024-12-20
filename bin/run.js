@@ -3,22 +3,13 @@
 const fs = require('fs')
 const path = require("path")
 
-module.exports = (netcheck, sc, configFile) => {
+module.exports = (jetcheck, sc, configFile) => {
     sc.command('run', {
-        desc: 'Run the monitoring',
+        desc: 'Run the check',
         callback: async function (options) {
-            const kernel = new netcheck({ configFile })
+            const kernel = new jetcheck({ configFile })
             await kernel.start()
         }
-    })
-
-    sc.command('test', {
-        desc: 'Run the monitoring',
-        callback: async function (options) {
-            const kernel = new netcheck({ headless: true, configFile })
-            await kernel.start()
-        }
-
     })
 }
 

@@ -4,7 +4,7 @@ const path = require("path")
 const pack = require("./package.json")
 const aevent = require("./lib/aevent")
 
-class netcheck {
+class jetcheck {
     constructor(options) {
         this.options = options || {}
         this.events = new aevent()
@@ -60,13 +60,8 @@ class netcheck {
 
         await this.events.emit("kernel.init", this)
     }
-
-    async stop() {
-
-    }
-
 }
 
-module.exports = netcheck
+module.exports = jetcheck
 
 
