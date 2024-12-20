@@ -1,7 +1,7 @@
 {
  "name": "jetcheck",
- "version": "Javascript based Network & System checker",
- "description": "",
+ "version": "1.0.1",
+ "description": "Javascript based Network & System checker",
  "main": "index.js",
  "scripts": {
   "test": "echo \"Error: no test specified\" && exit 1"
