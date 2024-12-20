@@ -13,6 +13,7 @@ module.exports = async function (kernel) {
 
     // triggers
     kernel.config.modules.push(__dirname + "/builtin/cmd.js")
+    kernel.config.modules.push(__dirname + "/builtin/ovh.js")
 
     kernel.events.on("kernel.init", async function () {
         if (kernel.options.headless === true)
@@ -27,6 +28,7 @@ module.exports = async function (kernel) {
             test.interval = test.interval * 1000
 
             kernel.tests.states[testName] = {
+                name: testName,
                 status: "INIT",
                 mode: "INIT",
                 startTime: Date.now(),
@@ -39,9 +41,9 @@ module.exports = async function (kernel) {
             }
             const state = kernel.tests.states[testName]
 
-            if(test.init.toLowerCase() === "working")
+            if (test.init.toLowerCase() === "working")
                 state.mode = "WORKING"
-            else if(test.init.toLowerCase() === "degraded")
+            else if (test.init.toLowerCase() === "degraded")
                 state.mode = "DEGRADED"
             else
                 state.mode = "WORKING"
@@ -87,37 +89,37 @@ module.exports = async function (kernel) {
                 async function pop() {
                     const task = state.current.pop()
                     if (!task) {
-                            
-                        if(state.succeed.length === 0) {
-                            if(state.mode === "WORKING") {
+
+                        if (state.succeed.length === 0) {
+                            if (state.mode === "WORKING") {
                                 console.log(`System "${testName}" is degraded`)
-                                if(test.failed) {
-                                    for(var item of test.failed) {
+                                if (test.failed) {
+                                    for (var item of test.failed) {
                                         const module = kernel.tests.plugins[item.type]
-                                        if(module && module.trigger) 
+                                        if (module && module.trigger)
                                             await module.trigger(item, state)
                                     }
                                 }
-                            } 
+                            }
                             state.mode = "DEGRADED"
                         }
                         else {
-                            if(state.mode === "DEGRADED") {
+                            if (state.mode === "DEGRADED") {
                                 console.log(`System ${testName} is restored`)
-                                if(test.succeed) {
-                                    for(var item of test.succeed) {
+                                if (test.succeed) {
+                                    for (var item of test.succeed) {
                                         const module = kernel.tests.plugins[item.type]
-                                        if(module && module.trigger) 
+                                        if (module && module.trigger)
                                             await module.trigger(item, state)
                                     }
                                 }
-                            } 
+                            }
                             state.mode = "WORKING"
                         }
 
                         state.lastSucceed = state.succeed
                         state.lastFailed = state.failed
-                        
+
                         state.startTime = Date.now()
                         state.lastTime = Date.now()
                         state.status = "PENDING"
