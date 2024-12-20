@@ -9,16 +9,15 @@ class jetcheck {
         this.options = options || {}
         this.events = new aevent()
         this.lib = require("./lib")
+        this.version = pack.version
         this.packages = {}
 
-        this.packageInfo(pack, ["service"])
+        this.packageInfo(pack)
     }
 
-    packageInfo(pkg, log) {
-        var buffer = [`version=${pkg.version} -`]
+    packageInfo(pkg) {
         for (var key in pkg.dependencies)
-            buffer.push(`${key}=${pkg.dependencies[key]}`)
-        this.packages[pkg.name] = pkg
+            this.packages[key] = pkg.dependencies[key]
     }
 
     async sleep(ms) {
@@ -26,7 +25,7 @@ class jetcheck {
     }
 
     async start(overwrite) {
-        this.version = pack.version
+        
 
         // load configuration
         if (this.options.configFile) {
