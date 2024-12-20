@@ -15,11 +15,8 @@ module.exports = async function (kernel) {
     kernel.config.modules.push(__dirname + "/builtin/cmd.js")
 
     kernel.events.on("kernel.init", async function () {
-
         if (kernel.options.headless === true)
             return
-
-        
 
         // prepare initial states
         for (var testName in kernel.config.tests) {

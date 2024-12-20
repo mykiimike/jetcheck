@@ -25,8 +25,6 @@ class jetcheck {
     }
 
     async start(overwrite) {
-        
-
         // load configuration
         if (this.options.configFile) {
             this.configFile = path.resolve(process.cwd(), this.options.configFile);
@@ -40,6 +38,12 @@ class jetcheck {
         else
             this.config = {}
 
+        // rewrite data dir
+        if (!this.config.dataDir) {
+            this.config.dataDir = path.dirname(this.configFile)
+            console.log(`Defaulting dataDir to ${this.config.dataDir}`)
+        }
+
         // overwrite feature
         if (overwrite)
             this.config = { ...this.config, ...overwrite }
@@ -50,7 +54,7 @@ class jetcheck {
         // load basic services
         await (require("./services/tests"))(this)
 
-        // load modules
+        // late load modules
         if (this.config.modules) {
             for (var module of this.config.modules) {
                 await require(module)(this)
