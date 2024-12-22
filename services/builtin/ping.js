@@ -6,7 +6,7 @@ module.exports = async function (kernel) {
             return (`ping(${options.host})`)
         },
         run: async function (options, task, state) {
-            const count = options.count ? options.count : 5
+            const count = options.count ? options.count : 3
             const ret = await kernel.lib.exec(`ping -c ${count} ${options.host}`)
             if(ret.error > 0)
                 return("Host down")

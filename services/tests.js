@@ -1,5 +1,4 @@
 const path = require("path")
-const { start } = require("repl")
 
 module.exports = async function (kernel) {
     kernel.tests = {
@@ -10,6 +9,7 @@ module.exports = async function (kernel) {
     // tester
     kernel.config.modules.push(__dirname + "/builtin/http.js")
     kernel.config.modules.push(__dirname + "/builtin/ping.js")
+    kernel.config.modules.push(__dirname + "/builtin/jetcheck.js")
 
     // triggers
     kernel.config.modules.push(__dirname + "/builtin/cmd.js")
@@ -70,7 +70,7 @@ module.exports = async function (kernel) {
                 const test = kernel.config.tests[testName]
                 const state = kernel.tests.states[testName]
 
-                // console.log(`name=${testName} status=${state.status} mode=${state.mode} elapsed=${test.interval - (Date.now() - state.startTime)}ms succeed=${state.lastSucceed.length} failed=${state.lastFailed.length}`)
+                console.log(`name=${testName} status=${state.status} mode=${state.mode} elapsed=${test.interval - (Date.now() - state.startTime)}ms succeed=${state.lastSucceed.length} failed=${state.lastFailed.length}`)
 
                 if (state.status === "RUNNING")
                     continue;
@@ -89,8 +89,10 @@ module.exports = async function (kernel) {
                 async function pop() {
                     const task = state.current.pop()
                     if (!task) {
-
-                        if (state.succeed.length === 0) {
+                        if(state.succeed.length === 0 && state.failed.length === 0) {
+                            // do nothing
+                        }
+                        else if (state.succeed.length === 0) {
                             if (state.mode === "WORKING") {
                                 console.log(`System "${testName}" is degraded`)
                                 if (test.failed) {
@@ -128,11 +130,16 @@ module.exports = async function (kernel) {
 
                     const module = kernel.tests.plugins[task.type]
                     // console.log(`Executing ${testName} > ${module.toString(task)}`)
-                    const error = await module.run(task, test, state)
-                    if (!error)
-                        state.succeed.push(task)
-                    else
-                        state.failed.push({ ...task, error })
+                    try {
+                        const error = await module.run(task, test, state)
+                        if (!error)
+                            state.succeed.push(task)
+                        else
+                            state.failed.push({ ...task, error })
+                    } catch(e) {
+                        console.log(`Test "${testName}" failed: ${e.message}`)
+                    }
+
 
                     setTimeout(pop, 10)
                 }

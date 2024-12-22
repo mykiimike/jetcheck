@@ -43,6 +43,8 @@ class jetcheck {
             this.config.dataDir = path.dirname(this.configFile)
             console.log(`Defaulting dataDir to ${this.config.dataDir}`)
         }
+        else
+            console.log(`Data dir is set to ${this.config.dataDir}`)
 
         // overwrite feature
         if (overwrite)
@@ -52,6 +54,9 @@ class jetcheck {
             this.config.modules = []
 
         // load basic services
+        await (require("./services/web"))(this)
+        await (require("./services/server"))(this)
+        await (require("./services/client"))(this)
         await (require("./services/tests"))(this)
 
         // late load modules
