@@ -54,7 +54,7 @@ module.exports = {
                     content: {
                         from: "alert@tc.none.com",
                         to: "noreply@nothing.com",
-                        title: "[FAILED] Dev test",
+                        subject: "[FAILED] Dev test",
                         text: `Hi, the 'Dev test' fails at ${new Date().toLocaleString()}`
                     }
                 },

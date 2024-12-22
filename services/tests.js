@@ -13,6 +13,7 @@ module.exports = async function (kernel) {
 
     // triggers
     kernel.config.modules.push(__dirname + "/builtin/cmd.js")
+    kernel.config.modules.push(__dirname + "/builtin/email.js")
     kernel.config.modules.push(__dirname + "/builtin/ovh.js")
 
     kernel.events.on("kernel.init", async function () {
