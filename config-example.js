@@ -21,32 +21,51 @@ const OVH_test_TEST = {
     ttl: 0
 }
 
+// seo nodemailer' configuration https://www.nodemailer.com/smtp/
+const emailDestination = {
+    host: "my.smtp.server",
+    port: 25,
+    secure: false,
+}
+
 module.exports = {
     tests: {
         myCheck: {
             // start from degraded mode
-            init: "DEGRADED",
+            // init: "DEGRADED",
 
             // test every 15 seconds
             interval: 15,
 
             // checker tasks
             tasks: [
-                { type: "ping", host: "8.8.8.8", count: 2 },
-                // { type: "ping", host: "54.43.5.5" },
-                { type: "http", url: "https://8.8.8.8" },
-                { type: "http", url: "https://1.1.1.1" },
-                { type: "http", url: "https://1.2.4.1" },
+                // { type: "ping", host: "8.8.8.8", count: 2 },
+                { type: "ping", host: "54.43.5.5" },
+                // { type: "http", url: "https://8.8.8.8" },
+                // { type: "http", url: "https://1.1.1.1" },
+                // { type: "http", url: "https://1.2.4.1" },
             ],
 
             // when system fails
             failed: [
                 {
+                    type: "email",
+                    transporter: emailDestination,
+                    content: {
+                        from: "alert@tc.none.com",
+                        to: "noreply@nothing.com",
+                        title: "[FAILED] Dev test",
+                        text: `Hi, the 'Dev test' fails at ${new Date().toLocaleString()}`
+                    }
+                },
+
+                {
                     type: "ovh.dns.zone.unset",
                     account: OVH_test,
-                    zone: "be-ys.io",
+                    zone: "none.com",
                     config: OVH_test_DNS
                 },
+
                 { type: "cmd", cmd: `logger "TEST: Disconnected from HTTP"` }
             ],
 
@@ -55,14 +74,8 @@ module.exports = {
                 {
                     type: "ovh.dns.zone.set",
                     account: OVH_test,
-                    zone: "be-ys.io",
+                    zone: "none.com",
                     config: OVH_test_DNS
-                },
-                {
-                    type: "ovh.dns.zone.set",
-                    account: OVH_test,
-                    zone: "be-ys.io",
-                    config: OVH_test_TEST
                 },
                 { type: "cmd", cmd: `logger "TEST: Connected from HTTP"` },
                 { type: "cmd", cmd: `logger "TEST: secondary command"` }

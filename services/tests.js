@@ -41,9 +41,9 @@ module.exports = async function (kernel) {
             }
             const state = kernel.tests.states[testName]
 
-            if (test.init.toLowerCase() === "working")
+            if (test.init?.toLowerCase() === "working")
                 state.mode = "WORKING"
-            else if (test.init.toLowerCase() === "degraded")
+            else if (test.init?.toLowerCase() === "degraded")
                 state.mode = "DEGRADED"
             else
                 state.mode = "WORKING"
