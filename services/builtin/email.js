@@ -18,15 +18,11 @@ async function sender(options) {
 module.exports = async function (kernel) {
     kernel.tests.plugins.email = {
         toString: function (options) {
-            return (`ping(${options.host})`)
-        },
-        run: async function (options, task, state) {
-
-            return(null)
+            return (`email(${options.content?.to})`)
         },
         trigger: async function (task, state) {
             await sender(task)
         }
     }
-    console.log("Loading PING plugin")
+    console.log("Loading Email plugin")
 }

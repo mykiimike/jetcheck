@@ -9,5 +9,5 @@ module.exports = async function (kernel) {
             await kernel.lib.exec(task.cmd)
         }
     }
-    console.log("Loading CMD plugin")
+    console.log("Loading Command plugin")
 }
