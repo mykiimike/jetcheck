@@ -90,12 +90,13 @@ module.exports = async function (kernel) {
                 async function pop() {
                     const task = state.current.pop()
                     if (!task) {
-                        if(state.succeed.length === 0 && state.failed.length === 0) {
+                        if (state.succeed.length === 0 && state.failed.length === 0) {
                             // do nothing
                         }
                         else if (state.succeed.length === 0) {
                             if (state.mode === "WORKING") {
                                 console.log(`System "${testName}" is degraded`)
+                                state.deadTime = new Date
                                 if (test.failed) {
                                     for (var item of test.failed) {
                                         const module = kernel.tests.plugins[item.type]
@@ -109,6 +110,7 @@ module.exports = async function (kernel) {
                         else {
                             if (state.mode === "DEGRADED") {
                                 console.log(`System ${testName} is restored`)
+                                
                                 if (test.succeed) {
                                     for (var item of test.succeed) {
                                         const module = kernel.tests.plugins[item.type]
@@ -116,6 +118,7 @@ module.exports = async function (kernel) {
                                             await module.trigger(item, state)
                                     }
                                 }
+                                delete state.deadTime
                             }
                             state.mode = "WORKING"
                         }
@@ -137,7 +140,7 @@ module.exports = async function (kernel) {
                             state.succeed.push(task)
                         else
                             state.failed.push({ ...task, error })
-                    } catch(e) {
+                    } catch (e) {
                         console.log(`Test "${testName}" failed: ${e.message}`)
                     }
 

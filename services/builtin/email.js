@@ -1,4 +1,5 @@
 const NodeMailer = require("nodemailer")
+const Elapsed = require("elapsed")
 
 async function sender(options) {
     const ret = {}
@@ -20,7 +21,55 @@ module.exports = async function (kernel) {
             return (`email(${options.content?.to})`)
         },
         trigger: async function (task, state) {
-            await sender(task)
+            const options = { ...task }
+
+            if (!task.content)
+                task.content = {}
+
+            options.content = { ...task.content }
+
+            // manage auto subject
+            if (!task.content.subject) {
+                if (state.mode === "DEGRADED")
+                    options.content.subject = `[RESOLVED] - ${state.name}`
+                else if (state.mode === "WORKING")
+                    options.content.subject = `[FAILED] - ${state.name}`
+            }
+            else if (typeof task.subject === 'function')
+                options.content.subject = task.subject(options, state)
+
+            // manage email content
+            if (!task.content.text) {
+                const deadTime = state.hasOwnProperty("deadTime") ? state.deadTime : new Date
+                if (state.mode === "DEGRADED")
+                    options.content.text = [
+                        `Hi,`,
+                        '',
+                        `The test '${state.name}' has been resolved at ${new Date().toLocaleString()}`,
+                            `\t- Detection time: ${deadTime.toLocaleString()}`,
+                            `\t- Outage elapsed: ${(new Elapsed(deadTime)).optimal}`,
+                    ].join("\n")
+                else if (state.mode === "WORKING")
+                    options.content.text = [
+                        `Hi,`,
+                        '',
+                        `The test '${state.name}' fails at ${new Date().toLocaleString()}`,
+                    ].join("\n")
+            }
+            else if (typeof task.text === 'function')
+                options.content.text = task.text(options, state)
+
+            if(!options.content.text)
+                options.content.text = ""
+
+            options.content.text = [
+                options.content.text,
+                "",
+                "--",
+                `Jetcheck v${kernel.version}`
+            ].join("\n")
+
+            await sender(options)
         }
     }
     console.log("Loading Email plugin")
