@@ -1,6 +1,6 @@
 {
  "name": "jetcheck",
- "version": "1.1.0",
+ "version": "1.1.1",
  "description": "Javascript based Network & System checker",
  "main": "index.js",
  "scripts": {

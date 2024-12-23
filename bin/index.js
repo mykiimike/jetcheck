@@ -32,7 +32,7 @@ try {
 
 
 sc.command('version', {
-    desc: 'Run the check',
+    desc: 'Get Jetcheck versions',
     callback: async function (options) {
         const kernel = new jetcheck({})
         console.log(`Jetcheck v${kernel.version}\n`)
