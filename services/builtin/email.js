@@ -1,7 +1,6 @@
 const NodeMailer = require("nodemailer")
 
 async function sender(options) {
-    console.log(options)
     const ret = {}
     try {
         const transporter = NodeMailer.createTransport(options.transporter);
