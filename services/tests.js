@@ -71,7 +71,7 @@ module.exports = async function (kernel) {
                 const test = kernel.config.tests[testName]
                 const state = kernel.tests.states[testName]
 
-                console.log(`name=${testName} status=${state.status} mode=${state.mode} elapsed=${test.interval - (Date.now() - state.startTime)}ms succeed=${state.lastSucceed.length} failed=${state.lastFailed.length}`)
+                // console.log(`name=${testName} status=${state.status} mode=${state.mode} elapsed=${test.interval - (Date.now() - state.startTime)}ms succeed=${state.lastSucceed.length} failed=${state.lastFailed.length}`)
 
                 if (state.status === "RUNNING")
                     continue;

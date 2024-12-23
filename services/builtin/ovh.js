@@ -53,20 +53,22 @@ module.exports = async function (kernel) {
 
             var found = null
             const list = await ctrl.get(`/domain/zone/${task.zone}/record?subDomain=${task.config.subDomain || ""}`)
-            for (var item of list.data) {
-                const info = await ctrl.get(`/domain/zone/be-ys.io/record/${item}`)
+            if (Array.isArray(list)) {
+                for (var item of list.data) {
+                    const info = await ctrl.get(`/domain/zone/be-ys.io/record/${item}`)
 
-                if(task.config.subDomain && info.data.subDomain !== task.config.subDomain)
-                    continue
-                if(task.config.fieldType && info.data.fieldType !== task.config.fieldType)
-                    continue
-                if(task.config.target && info.data.target !== task.config.target)
-                    continue
-                found = info
-                break
+                    if (task.config.subDomain && info.data.subDomain !== task.config.subDomain)
+                        continue
+                    if (task.config.fieldType && info.data.fieldType !== task.config.fieldType)
+                        continue
+                    if (task.config.target && info.data.target !== task.config.target)
+                        continue
+                    found = info
+                    break
+                }
             }
 
-            if(!found) {
+            if (!found) {
                 console.log(`[${state.name}] OVH DNS Entry "${task.config.subDomain}" set in zone "${task.zone}"`)
                 await ctrl.post(`/domain/zone/be-ys.io/record`, task.config)
                 await ctrl.post(`/domain/zone/${task.zone}/refresh`)
@@ -86,20 +88,22 @@ module.exports = async function (kernel) {
 
             var found = null
             const list = await ctrl.get(`/domain/zone/${task.zone}/record`)
-            for (var item of list.data) {
-                const info = await ctrl.get(`/domain/zone/${task.zone}/record/${item}`)
+            if (Array.isArray(list)) {
+                for (var item of list.data) {
+                    const info = await ctrl.get(`/domain/zone/${task.zone}/record/${item}`)
 
-                if(task.config.subDomain && info.data.subDomain !== task.config.subDomain)
-                    continue
-                if(task.config.fieldType && info.data.fieldType !== task.config.fieldType)
-                    continue
-                if(task.config.target && info.data.target !== task.config.target)
-                    continue
-                found = info.data
-                break
+                    if (task.config.subDomain && info.data.subDomain !== task.config.subDomain)
+                        continue
+                    if (task.config.fieldType && info.data.fieldType !== task.config.fieldType)
+                        continue
+                    if (task.config.target && info.data.target !== task.config.target)
+                        continue
+                    found = info.data
+                    break
+                }
             }
 
-            if(found) {
+            if (found) {
                 console.log(`[${state.name}] OVH DNS Entry "${task.config.subDomain}" unset from zone "${task.zone}"`)
                 console.log(`/domain/zone/${task.zone}/record/${found.id}`)
                 await ctrl.del(`/domain/zone/${task.zone}/record/${found.id}`)
