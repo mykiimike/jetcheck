@@ -53,7 +53,7 @@ module.exports = async function (kernel) {
 
             var found = null
             const list = await ctrl.get(`/domain/zone/${task.zone}/record?subDomain=${task.config.subDomain || ""}`)
-            if (Array.isArray(list)) {
+            if (Array.isArray(list?.data)) {
                 for (var item of list.data) {
                     const info = await ctrl.get(`/domain/zone/be-ys.io/record/${item}`)
 
@@ -88,7 +88,7 @@ module.exports = async function (kernel) {
 
             var found = null
             const list = await ctrl.get(`/domain/zone/${task.zone}/record`)
-            if (Array.isArray(list)) {
+            if (Array.isArray(list?.data)) {
                 for (var item of list.data) {
                     const info = await ctrl.get(`/domain/zone/${task.zone}/record/${item}`)
 
